@@ -55,7 +55,7 @@ composer install
 ./vendor/bin/sail artisan migrate
 ```
 
-8. O banco de dados ja foi alimentado com os cosmeticos. Para atualizar:
+8. Para popular o banco de dados ou atualizar
 ```bash
 ./vendor/bin/sail artisan app:import-fortnite-cosmetics
 ```

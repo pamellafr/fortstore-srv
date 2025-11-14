@@ -30,7 +30,11 @@ cd fortstore-srv
 cp .env.example .env
 ```
 
-3. Configure a chave da API no arquivo `.env`:
+3. Configure a chave da API Fortnite no arquivo `.env`:
+   - Acesse https://dashboard.fortniteapi.io/register
+   - Crie uma conta gratuita
+   - Apos o cadastro, voce recebera uma chave de API
+   - Adicione a chave no arquivo `.env`:
 ```
 FORTNITE_API_KEY=sua-chave-aqui
 ```
@@ -40,7 +44,7 @@ FORTNITE_API_KEY=sua-chave-aqui
 composer install
 ```
 
-4. Execute o Laravel Sail para subir os containers:
+5. Execute o Laravel Sail para subir os containers:
 ```bash
 ./vendor/bin/sail up -d
 ```

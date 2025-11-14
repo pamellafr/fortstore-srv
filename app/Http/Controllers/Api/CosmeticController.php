@@ -24,11 +24,30 @@ class CosmeticController extends Controller
             }
 
             if ($request->has('type') && ($type = trim($request->input('type')))) {
-                $query->where('type_name', $type);
+                $typeMap = [
+                    'outfit' => ['outfit', 'character'],
+                    'backpack' => ['backpack', 'back bling', 'backbling'],
+                    'pickaxe' => ['harvesting tool', 'harvestingtool', 'pickaxe', 'harvest'],
+                    'glider' => ['glider'],
+                    'emote' => ['emote', 'emoticon'],
+                    'wrap' => ['wrap'],
+                    'music' => ['music'],
+                ];
+                
+                $typeValues = $typeMap[strtolower($type)] ?? [strtolower($type)];
+                $typeLower = strtolower($type);
+                
+                $query->where(function ($q) use ($typeValues, $typeLower) {
+                    $q->whereRaw('LOWER(type_name) LIKE ?', ['%' . $typeLower . '%']);
+                    
+                    foreach ($typeValues as $typeValue) {
+                        $q->orWhereRaw('LOWER(type_name) LIKE ?', ['%' . strtolower($typeValue) . '%']);
+                    }
+                });
             }
 
             if ($request->has('rarity') && ($rarity = trim($request->input('rarity')))) {
-                $query->where('rarity_name', $rarity);
+                $query->whereRaw('LOWER(rarity_name) = ?', [strtolower($rarity)]);
             }
 
             if ($request->has('dateFrom') && ($dateFrom = $request->input('dateFrom'))) {
@@ -89,7 +108,6 @@ class CosmeticController extends Controller
                     }
                 }
             } catch (\Exception $e) {
-                // User not authenticated or token invalid
             }
 
             $cosmetics->getCollection()->transform(function ($cosmetic) use ($userCosmeticIds, $user) {
@@ -110,6 +128,10 @@ class CosmeticController extends Controller
                 } else {
                     $cosmetic->is_owned = false;
                 }
+                
+                $cosmetic->is_new = $cosmetic->is_new;
+                $cosmetic->is_on_sale = $cosmetic->is_on_sale;
+                $cosmetic->is_promoted = $cosmetic->is_promoted;
                 
                 return $cosmetic;
             });
@@ -159,7 +181,6 @@ class CosmeticController extends Controller
                     }
                 }
             } catch (\Exception $e) {
-                // Ignore
             }
 
             $cosmetics->transform(function ($cosmetic) use ($userCosmeticIds, $user) {
@@ -180,6 +201,10 @@ class CosmeticController extends Controller
                 } else {
                     $cosmetic->is_owned = false;
                 }
+                
+                $cosmetic->is_new = $cosmetic->is_new;
+                $cosmetic->is_on_sale = $cosmetic->is_on_sale;
+                $cosmetic->is_promoted = $cosmetic->is_promoted;
                 
                 return $cosmetic;
             });
@@ -225,7 +250,6 @@ class CosmeticController extends Controller
                     }
                 }
             } catch (\Exception $e) {
-                // Ignore
             }
 
             $cosmetics->transform(function ($cosmetic) use ($userCosmeticIds, $user) {
@@ -246,6 +270,10 @@ class CosmeticController extends Controller
                 } else {
                     $cosmetic->is_owned = false;
                 }
+                
+                $cosmetic->is_new = $cosmetic->is_new;
+                $cosmetic->is_on_sale = $cosmetic->is_on_sale;
+                $cosmetic->is_promoted = $cosmetic->is_promoted;
                 
                 return $cosmetic;
             });
@@ -281,7 +309,6 @@ class CosmeticController extends Controller
                     }
                 }
             } catch (\Exception $e) {
-                // Ignore authentication errors for public access
             }
             
             if ($user) {
@@ -290,6 +317,10 @@ class CosmeticController extends Controller
             } else {
                 $cosmetic->is_owned = false;
             }
+            
+            $cosmetic->is_new = $cosmetic->is_new;
+            $cosmetic->is_on_sale = $cosmetic->is_on_sale;
+            $cosmetic->is_promoted = $cosmetic->is_promoted;
             
             return response()->json($cosmetic);
         } catch (\Exception $e) {

@@ -50,6 +50,7 @@ class Cosmetic extends Model
     protected $appends = [
         'is_new',
         'is_on_sale',
+        'is_promoted',
     ];
 
 	public function images()
@@ -79,6 +80,16 @@ class Cosmetic extends Model
             return false;
         }
 
-        return $this->interest >= 0.6;
+        // À venda: interest >= 0.6 e < 0.75 (promoção é >= 0.75)
+        return $this->interest >= 0.6 && $this->interest < 0.75;
+    }
+    
+    public function getIsPromotedAttribute(): bool
+    {
+        if (is_null($this->interest)) {
+            return false;
+        }
+
+        return $this->interest >= 0.75;
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CosmeticController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -37,9 +38,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/cosmetics/owned', [CosmeticController::class, 'owned']);
     Route::post('/cosmetics/{id}/purchase', [CosmeticController::class, 'purchase']);
     Route::post('/cosmetics/{id}/return', [CosmeticController::class, 'returnCosmetic']);
+    Route::get('/users/purchase-history', [UserController::class, 'purchaseHistory']);
 });
 
 Route::get('/cosmetics', [CosmeticController::class, 'index']);
 Route::get('/cosmetics/new', [CosmeticController::class, 'newCosmetics']);
 Route::get('/shop', [CosmeticController::class, 'shop']);
 Route::get('/cosmetics/{id}', [CosmeticController::class, 'show']);
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{id}', [UserController::class, 'show']);

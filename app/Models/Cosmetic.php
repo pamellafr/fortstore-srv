@@ -80,7 +80,6 @@ class Cosmetic extends Model
             return false;
         }
 
-        // À venda: interest >= 0.6 e < 0.75 (promoção é >= 0.75)
         return $this->interest >= 0.6 && $this->interest < 0.75;
     }
     

@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('cosmetics', function (Blueprint $table) {
+        if (!Schema::hasTable('cosmetics')) {
+            Schema::create('cosmetics', function (Blueprint $table) {
             $table->id();
             $table->string('cosmetic_id')->unique(); // id do JSON
             $table->string('type_id')->nullable();
@@ -34,6 +35,7 @@ return new class extends Migration
             $table->json('set')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void

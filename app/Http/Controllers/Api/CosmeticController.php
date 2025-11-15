@@ -14,7 +14,7 @@ class CosmeticController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Cosmetic::query()->with('images');
+            $query = Cosmetic::query()->with('images')->has('images');
 
             if ($request->has('search') && ($search = trim($request->input('search')))) {
                 $query->where(function ($q) use ($search) {
@@ -151,6 +151,7 @@ class CosmeticController extends Controller
             $limit = is_numeric($limit) ? (int) $limit : 24;
 
             $cosmetics = Cosmetic::with('images')
+                ->has('images')
                 ->whereDate('added_date', '>=', Carbon::now()->subDays($days))
                 ->orderByDesc('added_date')
                 ->take($limit)
@@ -160,6 +161,7 @@ class CosmeticController extends Controller
                 $fallbackLimit = $request->input('fallback_limit', 24);
                 $fallbackLimit = is_numeric($fallbackLimit) ? (int) $fallbackLimit : 24;
                 $cosmetics = Cosmetic::with('images')
+                    ->has('images')
                     ->orderByDesc('created_at')
                     ->take($fallbackLimit)
                     ->get();
@@ -222,6 +224,7 @@ class CosmeticController extends Controller
             $limit = is_numeric($limit) ? (int) $limit : 24;
 
             $cosmetics = Cosmetic::with('images')
+                ->has('images')
                 ->whereNotNull('price')
                 ->orderByDesc('interest')
                 ->take($limit)
@@ -229,6 +232,7 @@ class CosmeticController extends Controller
 
             if ($cosmetics->isEmpty()) {
                 $cosmetics = Cosmetic::with('images')
+                    ->has('images')
                     ->orderByDesc('updated_at')
                     ->take($limit)
                     ->get();
@@ -287,7 +291,7 @@ class CosmeticController extends Controller
     public function show(Request $request, $id)
     {
         try {
-            $cosmetic = Cosmetic::with('images')->findOrFail($id);
+            $cosmetic = Cosmetic::with('images')->has('images')->findOrFail($id);
             
             $cosmetic->images = $cosmetic->images->filter(function ($image) {
                 if (!$image->url) return false;
@@ -421,7 +425,7 @@ class CosmeticController extends Controller
                 return response()->json(['message' => 'Não autenticado'], 401);
             }
 
-            $cosmetics = $user->cosmetics()->with('images')->get();
+            $cosmetics = $user->cosmetics()->with('images')->has('images')->get();
 
             $cosmetics->transform(function ($cosmetic) {
                 if ($cosmetic->images) {

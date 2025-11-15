@@ -51,6 +51,7 @@ class Cosmetic extends Model
         'is_new',
         'is_on_sale',
         'is_promoted',
+        'is_bundle',
     ];
 
 	public function images()
@@ -63,6 +64,43 @@ class Cosmetic extends Model
         return $this->belongsToMany(User::class, 'user_cosmetics')
             ->withPivot('purchase_price', 'purchased_at')
             ->withTimestamps();
+    }
+
+    public function bundleItems()
+    {
+        return $this->belongsToMany(Cosmetic::class, 'bundle_cosmetics', 'bundle_cosmetic_id', 'cosmetic_id')
+            ->withTimestamps();
+    }
+
+    public function bundles()
+    {
+        return $this->belongsToMany(Cosmetic::class, 'bundle_cosmetics', 'cosmetic_id', 'bundle_cosmetic_id')
+            ->withTimestamps();
+    }
+
+    public function getIsBundleAttribute(): bool
+    {
+        return $this->type_name === 'Item Bundle';
+    }
+
+    public function getTotalIndividualPriceAttribute(): int
+    {
+        if (!$this->is_bundle) {
+            return 0;
+        }
+        return $this->bundleItems()->sum('price') ?? 0;
+    }
+
+    public function getSavingsAttribute(): int
+    {
+        if (!$this->is_bundle) {
+            return 0;
+        }
+        $total = $this->total_individual_price;
+        if ($total === 0 || !$this->price) {
+            return 0;
+        }
+        return max(0, $total - $this->price);
     }
 
     public function getIsNewAttribute(): bool

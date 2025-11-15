@@ -2,19 +2,16 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Auth\Events\Failed;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Cosmetic;
 use App\Models\CosmeticImage;
 
-use function PHPUnit\Framework\isEmpty;
-
 class ImportFortniteCosmetics extends Command
 {
     protected $signature = 'app:import-fortnite-cosmetics';
 
-    protected $description = 'Command description';
+    protected $description = 'Importa cosméticos do Fortnite da API';
 
     public function handle()
     {

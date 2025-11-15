@@ -8,13 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('cosmetic_images', function (Blueprint $table) {
+        if (!Schema::hasTable('cosmetic_images')) {
+            Schema::create('cosmetic_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cosmetic_id')->constrained('cosmetics')->onDelete('cascade');
             $table->string('type'); // icon, featured, background, icon_background, full_background, juno_icon, beans_icon
             $table->string('url');
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void
